@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "huffmanfun.h"
+#include "hashing.h"
 
 int main(){
     queue* root = NULL;
