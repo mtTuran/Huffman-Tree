@@ -1,21 +1,75 @@
-typedef struct leaf_node
-{
-    char letter;
-    int recurrence;
-} leaf_node;
+#include <stdlib.h>
+#include <stdio.h>
 
-typedef struct tree_node
+typedef struct node
 {
-    int total_recurrence;
-    union
+    int recurrence;
+    char letter;
+    struct node* left;
+    struct node* right;
+}node;
+
+typedef struct queue{
+    node* element;
+    queue* next_element;
+}queue;
+
+void insert_to_queue(queue** head, node* new_element){
+    queue* new_node = (queue*) malloc(sizeof(queue));
+    new_node -> element = new_element;
+    if (*head == NULL){       
+        new_node -> next_element = NULL;
+        *head = new_node;
+        return;
+    }
+
+    queue* curr = *head;
+    queue* prev = NULL;
+    while (curr != NULL && curr -> element -> recurrence < new_node -> element -> recurrence)
     {
-        struct tree_node* right_tree;
-        struct leaf_node* right_leaf;
-    } right;
-    
-    union
-    {
-        struct tree_node* left_tree;
-        struct leaf_node* left_leaf;
-    } left;
-} tree_node;
+        prev = curr;
+        curr = curr -> next_element;   
+    }
+    if (prev == NULL) {
+        new_node -> next_element = *head;
+        *head = new_node;
+    }
+    else {
+        prev -> next_element = new_node;
+        new_node -> next_element = curr;
+    } 
+}
+
+node* pop(queue** head){
+    queue* popped = *head;
+    queue* new_head = popped -> next_element;
+    *head = new_head;
+    node* element = popped -> element;
+    free(popped);
+    return element;
+}
+
+node* create_leaf(int recurrence, char letter){
+    node* element = (node*) malloc(sizeof(node));
+    element -> recurrence = recurrence;
+    element -> letter = letter;
+    element -> left = NULL;
+    element -> right = NULL;
+    return element;
+}
+
+node* huffman(node* small, node* large){
+    node* father_node = (node*) malloc(sizeof(node));
+    father_node -> left = small;
+    father_node -> right = large;
+    father_node -> recurrence = small -> recurrence + large -> recurrence;
+    father_node -> letter = NULL;
+    return father_node;
+}
+
+int main(){
+    queue* root = NULL;
+
+
+    return 0;
+}
