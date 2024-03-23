@@ -1,18 +1,5 @@
 #include <stdlib.h>
-#include <stdio.h>
-
-typedef struct node
-{
-    int recurrence;
-    char letter;
-    struct node* left;
-    struct node* right;
-}node;
-
-typedef struct queue{
-    node* element;
-    queue* next_element;
-}queue;
+#include "huffmanfun.h"
 
 void insert_to_queue(queue** head, node* new_element){
     queue* new_node = (queue*) malloc(sizeof(queue));
@@ -63,13 +50,6 @@ node* huffman(node* small, node* large){
     father_node -> left = small;
     father_node -> right = large;
     father_node -> recurrence = small -> recurrence + large -> recurrence;
-    father_node -> letter = NULL;
+    father_node -> letter = '\0';
     return father_node;
-}
-
-int main(){
-    queue* root = NULL;
-
-
-    return 0;
 }
