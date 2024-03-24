@@ -8,8 +8,8 @@ hash_table* create_hash_table(int size){
     new_map -> count = 0;
 
     for (int i = 0; i < size; i++) {
-    new_map->table[i].letter = '\0';
-    new_map->table[i].frequency = 0;
+        new_map->table[i].letter = '\0';
+        new_map->table[i].frequency = 0;
     }
 
     return new_map;
@@ -71,6 +71,29 @@ int search_table(hash_table* table, char letter){
         else{
             printf("An error occurred in the searching process.\nSize of the map: %d\nCalculated index: %d\nCollision: %d", size, index, collision);
             exit(1);
+        }
+    }
+}
+
+char* create_search_list(int size){
+    char search_list[] = malloc(sizeof(char) * size);
+    for (int i = 0; i < size; i++) {
+        search_list[i] = '\0';
+    }
+    return search_list;
+}
+
+void add_to_search_list(char search_list[], int size, char letter){
+    int flag = 0;
+    for(int i = 0; i < size; i = i + 1){
+        if (flag){
+            break;
+        }
+        else if(search_list[i] == letter){
+            flag = 1;
+        }
+        else{
+            search_list[i] = letter;
         }
     }
 }

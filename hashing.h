@@ -19,5 +19,8 @@ int hash_function(char letter, int collision, int size);
 void map_to_table(hash_table* table, char letter);
 int search_table(hash_table* table, char letter);
 
+char* create_search_list(int size);
+void add_to_search_list(char search_list[], int size, char letter);
+
 
 #endif
