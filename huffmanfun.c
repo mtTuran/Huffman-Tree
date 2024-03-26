@@ -1,5 +1,17 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "huffmanfun.h"
+
+int height(node* root) {
+    if (root == NULL)
+        return 0;
+    else {
+        int left_height = height(root->left);
+        int right_height = height(root->right);
+        
+        return (left_height > right_height) ? (left_height + 1) : (right_height + 1);
+    }
+}
 
 void insert_to_queue(queue** head, node* new_element){
     queue* new_node = (queue*) malloc(sizeof(queue));
@@ -52,4 +64,28 @@ node* huffman(node* small, node* large){
     father_node -> recurrence = small -> recurrence + large -> recurrence;
     father_node -> letter = '\0';
     return father_node;
+}
+
+void print_encoding(node* root, int coding[], int top){
+    if (root == NULL) return;
+
+    if (root->left == NULL && root->right == NULL){
+        printf("%c: ", root -> letter);
+        for (int i = 0; i < top; i = i + 1)
+        {
+            printf("%d", coding[i]);
+        }
+        printf("\n");
+    }
+
+    if (root->left){
+        coding[top] = 0;
+        print_encoding(root -> left, coding, top + 1);
+    }
+
+    if (root->right){
+        coding[top] = 1;
+        print_encoding(root -> right, coding, top + 1);
+    }
+
 }

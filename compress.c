@@ -38,6 +38,9 @@ int main(){
             number_of_nodes -= 1;
         }
         
+        int max_bit = height(father);
+        int bit_stream[max_bit];
+        print_encoding(father, bit_stream, 0);
         
     }else{
         printf("Error opening file");

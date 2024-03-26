@@ -76,7 +76,7 @@ int search_table(hash_table* table, char letter){
 }
 
 char* create_search_list(int size){
-    char search_list[] = malloc(sizeof(char) * size);
+    char* search_list = (char*) malloc(sizeof(char) * size);
     for (int i = 0; i < size; i++) {
         search_list[i] = '\0';
     }
@@ -92,8 +92,9 @@ void add_to_search_list(char search_list[], int size, char letter){
         else if(search_list[i] == letter){
             flag = 1;
         }
-        else{
+        else if(search_list[i] == '\0'){
             search_list[i] = letter;
+            break;
         }
     }
 }
