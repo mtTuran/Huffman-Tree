@@ -3,6 +3,28 @@
 #include "huffmanfun.h"
 #include "hashing.h"
 
+void hash_encode(hash_table* table, node* root, unsigned char bits[], int top){
+    if (root == NULL) return;
+
+    if (root->left == NULL && root->right == NULL){
+        printf("%c ", table->table[117].letter);    // after modifying the encode[] value, the next element in the hash table loses it's letter property
+        int char_index = search_index(table, root -> letter);
+        for (int i = 0; i < top; i = i + 1){
+            table -> table[char_index].encode[i] = bits[i];
+        }
+    }
+
+    if (root->left){
+        bits[top] = 0;
+        hash_encode(table, root -> left, bits, top + 1);
+    }
+
+    if (root->right){
+        bits[top] = 1;
+        hash_encode(table, root -> right, bits, top + 1);
+    }
+}
+
 int main(){
     FILE* handle = fopen("mytext.txt", "r");
 
@@ -39,8 +61,9 @@ int main(){
         }
         
         int max_bit = height(father);
-        int bit_stream[max_bit];
-        print_encoding(father, bit_stream, 0);
+        unsigned char bits[max_bit];
+        hash_encode(dictionary, father, bits, 0);
+
         
     }else{
         printf("Error opening file");
