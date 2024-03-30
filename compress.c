@@ -3,15 +3,12 @@
 #include "huffmanfun.h"
 #include "hashing.h"
 
-void hash_encode(hash_table* table, node* root, unsigned char bits[], int top){
+void hash_encode(hash_table* table, node* root, char bits[], int top){
     if (root == NULL) return;
 
     if (root->left == NULL && root->right == NULL){
-        printf("%c ", table->table[117].letter);    // after modifying the encode[] value, the next element in the hash table loses it's letter property
-        int char_index = search_index(table, root -> letter);
-        for (int i = 0; i < top; i = i + 1){
-            table -> table[char_index].encode[i] = bits[i];
-        }
+        int index = search_index(table, root -> letter);
+        encode_letter(table, root -> letter, bits, top);
     }
 
     if (root->left){
@@ -61,9 +58,9 @@ int main(){
         }
         
         int max_bit = height(father);
-        unsigned char bits[max_bit];
+        char* bits = (char*) malloc(sizeof(char) * (max_bit + 1));        
         hash_encode(dictionary, father, bits, 0);
-
+        print_encode_table(dictionary);
         
     }else{
         printf("Error opening file");

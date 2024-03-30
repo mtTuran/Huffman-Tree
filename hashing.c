@@ -3,7 +3,11 @@
 #include "hashing.h"
 
 hash_table* create_hash_table(int size){
-    hash_table* new_map = (hash_table*) malloc(sizeof(hash_table) + sizeof(hash_item) * size + sizeof(unsigned char) * size);
+    hash_table* new_map = (hash_table*) malloc(sizeof(hash_table) + sizeof(hash_item) * size);
+    if(new_map == NULL){
+        printf("Couldn't allocate enough space while creating the hash table.");
+        exit(1);
+    }
     new_map -> size = size;
     new_map -> count = 0;
 
@@ -31,6 +35,7 @@ void map_to_table(hash_table* table, char letter){
             if (table -> table[index].letter == '\0') {
                 table -> table[index].letter = letter;
                 table -> table[index].frequency += 1;
+                table -> table[index].encoding = NULL;
                 table -> count = table -> count + 1;
                 success = 1;
             }
@@ -124,6 +129,44 @@ void add_to_search_list(char search_list[], int size, char letter){
         else if(search_list[i] == '\0'){
             search_list[i] = letter;
             break;
+        }
+    }
+}
+
+encode_node* create_encode_node(char bit){
+    encode_node* new_bit = (encode_node*) malloc(sizeof(encode_node));
+    new_bit -> bit = bit;
+    new_bit -> next_bit = NULL;
+}
+
+void encode_letter(hash_table* table, char letter, char bits[], int top){
+    int index = search_index(table, letter);
+    for (size_t i = 0; i < top; i = i + 1){
+        encode_node* new_bit = create_encode_node(bits[i]);
+        if (table -> table[index].encoding == NULL) table -> table[index].encoding = new_bit;
+        else{
+            encode_node* curr = table -> table[index].encoding;
+            while (curr -> next_bit != NULL){
+                curr = curr -> next_bit;
+            }
+            curr -> next_bit = new_bit;
+        }
+    }
+    
+}
+
+void print_encode_table(hash_table* table) {
+    printf("Encode Table:\n");
+    for (int i = 0; i < table->size; i++) {
+        if (table->table[i].letter != '\0') {
+            printf("Index %d: %c - ", i, table->table[i].letter);
+            printf("Encoding: ");
+            encode_node* curr = table -> table[i].encoding;
+            while (curr != NULL){
+                printf("%d", curr -> bit);
+                curr = curr -> next_bit;
+            }
+            printf("\n");
         }
     }
 }

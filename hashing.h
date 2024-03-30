@@ -1,12 +1,19 @@
 #ifndef HASHING_H
 #define HASHING_H
 
+typedef struct encode_node
+{
+    char bit;
+    struct encode_node* next_bit;
+}encode_node;
+
+
 typedef struct hash_item
 {
     char letter;
     int frequency;
-    unsigned char encode[]; // this thing right here is the source of my agony. dyn allocate it and it doesn't work
-}hash_item;                 // give it a constant value and the program outright crashes...
+    encode_node* encoding;
+}hash_item;
 
 typedef struct hash_table
 {
@@ -24,5 +31,8 @@ int search_table(hash_table* table, char letter);
 char* create_search_list(int size);
 void add_to_search_list(char search_list[], int size, char letter);
 
+encode_node* create_encode_node(char bit);
+void encode_letter(hash_table* table, char letter, char bits[], int top);
+void print_encode_table(hash_table* table);
 
 #endif
