@@ -22,11 +22,55 @@ void hash_encode(hash_table* table, node* root, char bits[], int top){
     }
 }
 
+void encode_file(char* input_file, char* output_file, hash_table* table){
+    FILE* input_handle = fopen(input_file, "rb");
+    FILE* output_handle = fopen(output_file, "wb");
+
+    if (!input_handle || !output_handle){
+        printf("File couldn't be opened!");
+        exit(1);
+    }
+
+    int buffer = 0;
+    int buffer_counter = 0;
+    int bit_count = 0;
+    int read;
+    while ((read = fgetc(input_handle)) != EOF){
+        encode_node* curr = table -> table[search_index(table, read)].encoding;
+        while (curr != NULL){
+            buffer <<= 1;
+            buffer |= curr -> bit;
+            buffer_counter = buffer_counter + 1;
+
+            if (buffer_counter == 8) {
+                fputc(buffer, output_handle);
+                buffer = 0;
+                buffer_counter = 0;
+            }
+            curr = curr->next_bit;
+            bit_count = bit_count + 1;
+        }
+    }
+    if (buffer_counter > 0) {
+        buffer <<= (8 - buffer_counter);
+        fputc(buffer, output_handle);
+    }
+
+    fseek(output_handle, 0, SEEK_SET);
+    fwrite(&bit_count, sizeof(int), 1, output_handle);
+
+    fclose(input_handle);
+    fclose(output_handle);
+    printf("Compressing successful!");
+}
+
 int main(){
-    FILE* handle = fopen("mytext.txt", "r");
+    char* input_file = "mytext.txt";
+    char* output_file = "myout.bin";
+    FILE* handle = fopen(input_file, "rb");
 
     if (handle != NULL){
-        int char_limit = 255;
+        int char_limit = 256;
         char current;
         hash_table* dictionary = create_hash_table(char_limit);
         char* search_list = create_search_list(char_limit);
@@ -61,7 +105,7 @@ int main(){
         char* bits = (char*) malloc(sizeof(char) * (max_bit + 1));        
         hash_encode(dictionary, father, bits, 0);
         print_encode_table(dictionary);
-        
+        encode_file(input_file, output_file, dictionary);        
     }else{
         printf("Error opening file");
         exit(1);
