@@ -3,7 +3,7 @@
 
 typedef struct encode_node
 {
-    char bit;
+    unsigned char bit;
     struct encode_node* next_bit;
 }encode_node;
 
