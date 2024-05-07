@@ -14,6 +14,7 @@ hash_table* create_hash_table(int size){
     for (int i = 0; i < size; i++) {
         new_map->table[i].letter = '\0';
         new_map->table[i].frequency = 0;
+        new_map->table[i].code_length = 0;
     }
 
     return new_map;
@@ -133,15 +134,21 @@ void add_to_search_list(char search_list[], int size, char letter){
     }
 }
 
+void assign_canonical_length(hash_table* table, char letter, int bit_length){
+    int index = search_index(table, letter);
+    table -> table[index].code_length = bit_length;
+}
+
 encode_node* create_encode_node(char bit){
     encode_node* new_bit = (encode_node*) malloc(sizeof(encode_node));
     new_bit -> bit = bit;
     new_bit -> next_bit = NULL;
+    return new_bit;
 }
 
-void encode_letter(hash_table* table, char letter, char bits[], int top){
+void encode_letter(hash_table* table, char letter, unsigned int* bits, unsigned int bit_length){
     int index = search_index(table, letter);
-    for (size_t i = 0; i < top; i = i + 1){
+    for (int i = 0; i < bit_length; i = i + 1){
         encode_node* new_bit = create_encode_node(bits[i]);
         if (table -> table[index].encoding == NULL) table -> table[index].encoding = new_bit;
         else{

@@ -3,7 +3,7 @@
 
 typedef struct node
 {
-    int recurrence;
+    int recurrence; // will be used as encoding length for canonical format as well
     char letter;
     struct node* left;
     struct node* right;

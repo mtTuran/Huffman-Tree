@@ -12,6 +12,7 @@ typedef struct hash_item
 {
     char letter;
     int frequency;
+    int code_length;
     encode_node* encoding;
 }hash_item;
 
@@ -31,8 +32,10 @@ int search_table(hash_table* table, char letter);
 char* create_search_list(int size);
 void add_to_search_list(char search_list[], int size, char letter);
 
+void assign_canonical_length(hash_table* table, char letter, int bit_length);
 encode_node* create_encode_node(char bit);
-void encode_letter(hash_table* table, char letter, char bits[], int top);
+void encode_letter(hash_table* table, char letter, unsigned int* bits, unsigned int bit_length);
+int is_power_of_two(unsigned int n);
 void print_encode_table(hash_table* table);
 
 #endif
