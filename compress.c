@@ -67,22 +67,27 @@ encode_node* serialize_huffman(queue** ordered_letters, int* significant_bit_num
         return NULL;
     }
     encode_node* head = NULL;
-    encode_node* current_bit = head;
+    encode_node* current_bit = NULL;
     (*significant_bit_number) = 0;
     while (letters != NULL){
         node* curr_element = pop(&letters);
         char curr_letter = curr_element -> letter;
         int encoding_length = curr_element -> recurrence;
-        for (int i = 7; i >= 0; i = i - 1){
-            current_bit = create_encode_node(((curr_letter) >> i) & 0x1);
-            current_bit = current_bit -> next_bit;
+         for (int i = 7; i >= 0; i = i - 1) {
+            if (head == NULL) {
+                head = create_encode_node(((curr_letter) >> i) & 0x1);
+                current_bit = head;
+            } else {
+                current_bit->next_bit = create_encode_node(((curr_letter) >> i) & 0x1);
+                current_bit = current_bit->next_bit;
+            }
         }
-        for (int i = encoding_length - 1; i >= 0; i = i - 1){
-            current_bit = create_encode_node(((curr_letter) >> i) & 0x1);
-            current_bit = current_bit -> next_bit;
+        for (int i = 31; i >= 0; i = i - 1){
+            current_bit->next_bit = create_encode_node(((encoding_length) >> i) & 0x1);
+            current_bit = current_bit->next_bit;
         }
-        (*significant_bit_number) = (*significant_bit_number) + 8 + encoding_length;
-    }  
+        (*significant_bit_number) = (*significant_bit_number) + 8 + 32;
+    }
     return head;
 }
 
@@ -94,11 +99,6 @@ void encode_file(char* input_file, char* output_file, hash_table* table, encode_
         printf("File couldn't be opened!");
         exit(1);
     }
-
-    // since we do not know the bit number that the text will need, we need placeholder memory for backtracking
-    int placeholder_int = 0;    // number of significant bits the tree will need
-    unsigned char placeholder_byte = 0;
-
     fwrite(&tree_info_bits, sizeof(int), 1, output_handle);
     unsigned char buffer = 0;
     int character_bit_length = 0;
@@ -107,6 +107,7 @@ void encode_file(char* input_file, char* output_file, hash_table* table, encode_
     while (curr != NULL) {
         for (int i = 0; i < 8; i = i + 1){
             buffer <<= 1;
+            printf("%d ", curr -> bit);
             buffer |= ((curr -> bit >> 0) & 1); // take the least significant bit which is set to either 0 or 1
             curr = curr->next_bit;
         }
@@ -122,7 +123,8 @@ void encode_file(char* input_file, char* output_file, hash_table* table, encode_
         printf("%d\n", character_bit_length);
         character_bit_length = 0;
     }
-
+    // since we do not know the bit number that the text will need, we need placeholder memory for backtracking
+    int placeholder_int = 0;
     fwrite(&placeholder_int, sizeof(int), 1, output_handle);    // number of bits that the text will need
     buffer = 0;
     int buffer_counter = 0;
@@ -160,8 +162,8 @@ void encode_file(char* input_file, char* output_file, hash_table* table, encode_
 }
 
 int main(){
-    char* input_file = "long_input_text.txt";
-    char* output_file = "my_new_keyed_long_text.bin";
+    char* input_file = "testText.txt";
+    char* output_file = "compressedTest.bin";
     FILE* handle = fopen(input_file, "rb");
 
     if (handle != NULL){

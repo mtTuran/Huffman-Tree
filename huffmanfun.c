@@ -39,6 +39,32 @@ void insert_to_queue(queue** head, node* new_element){
     } 
 }
 
+void reverse_insert(queue** head, node* new_element){   // will be used by the decoder. for this function recurrence means bit length
+    queue* new_node = (queue*) malloc(sizeof(queue));
+    new_node -> element = new_element;
+    if (*head == NULL){       
+        new_node -> next_element = NULL;
+        *head = new_node;
+        return;
+    }
+
+    queue* curr = *head;
+    queue* prev = NULL;
+    while (curr != NULL && curr -> element -> recurrence >= new_node -> element -> recurrence)  // >= otherwise same length letters in decoder
+    {                                                                                           // will have a reversed bit
+        prev = curr;
+        curr = curr -> next_element;   
+    }
+    if (prev == NULL) {
+        new_node -> next_element = *head;
+        *head = new_node;
+    }
+    else {
+        prev -> next_element = new_node;
+        new_node -> next_element = curr;
+    } 
+}
+
 node* pop(queue** head){
     queue* popped = *head;
     queue* new_head = popped -> next_element;
