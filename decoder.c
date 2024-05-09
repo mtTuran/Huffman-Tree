@@ -3,6 +3,15 @@
 #include "huffmanfun.h"
 
 int tree_info_bits;
+node* create_empty_node(){
+    node* new_node = (node*) malloc(sizeof(node));
+    new_node -> letter = '\0';
+    new_node -> recurrence = 0;
+    new_node -> left = NULL;
+    new_node -> right = NULL;
+    return new_node;
+}
+
 node* rebuild_tree(FILE* handle){    
     fread(&tree_info_bits, sizeof(int), 1, handle);
     unsigned char letter = 0;
@@ -12,15 +21,43 @@ node* rebuild_tree(FILE* handle){
     for (int i = 0; i < number_of_nodes; i = i + 1){
         fread(&letter, sizeof(letter), 1, handle);
         fread(&bit_length, sizeof(bit_length), 1, handle);
-        reverse_insert(&reverse_ordered_letters, create_leaf(bit_length, letter));
+        alt_insert(&reverse_ordered_letters, create_leaf(bit_length, letter));
     }
 
-    node* root = NULL;
-    while (number_of_nodes > 1){
-        node* small = pop(&reverse_ordered_letters);
-        node* big = pop(&reverse_ordered_letters);
-        root = huffman(small, big);
-        reverse_insert(&reverse_ordered_letters, root);
+    node* root = create_empty_node();
+    unsigned int code = 0;
+    unsigned int prev_bit_length = 1;
+    while (number_of_nodes > 0) {
+        node* current_letter_element = pop(&reverse_ordered_letters);
+        char letter = current_letter_element -> letter;
+        int code_length = current_letter_element -> recurrence; // bit length in this case
+        if (prev_bit_length != code_length){
+            for (int i = 0; i < (code_length - prev_bit_length); i = i + 1){
+                code = code << 1;
+            }
+            prev_bit_length = code_length;            
+        }
+        node* curr = root;
+        for (int i = code_length - 1; i >= 0; i = i - 1){
+            if(((code >> i) & 1) == 1){
+                if(curr -> left) curr = curr -> left;
+                else{
+                    curr -> left = create_empty_node();
+                    curr = curr -> left;
+                }
+            }
+            else{
+                if(curr -> right) curr = curr -> right;
+                else{
+                    curr -> right = create_empty_node();
+                    curr = curr -> right;
+                }
+            }
+        }
+        curr -> letter = letter;
+        curr -> recurrence = code_length;
+        curr = root;        
+        code = code + 1;
         number_of_nodes -= 1;
     }
     printf("Tree reconstructed successfully.\n");        
@@ -108,9 +145,7 @@ int main(){
     if (handle != NULL){
         printf("File opened successfully.\n");
         node* root = rebuild_tree(handle);
-        //print_codes(root);
-        //decode_file(input_file, output_file, root);
-        inorder_traversal(root);
+        decode_file(input_file, output_file, root);
     }
     else{
         printf("An error occurred while opening the input file!");

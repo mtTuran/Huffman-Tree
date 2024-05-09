@@ -16,7 +16,7 @@ typedef struct queue{
 
 int height(node* root);
 void insert_to_queue(queue** head, node* new_element);
-void reverse_insert(queue** head, node* new_element);
+void alt_insert(queue** head, node* new_element);
 node* pop(queue** head);
 node* create_leaf(int recurrence, char letter);
 node* huffman(node* small, node* large);
