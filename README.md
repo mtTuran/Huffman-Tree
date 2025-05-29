@@ -36,7 +36,7 @@ huffman-compression-project/
 
 Since this project does not include a build system like Makefile or setup scripts, you can compile the executables manually using `gcc` from the terminal.
 
-### Compile Compression Executable
+### Compile Compression And Decompression Executables
 ```powershell
 cd huffman-compression-project                                                  # enter the project folder
 gcc src/main_compress.c src/huffman.c src/hashtable.c -o build/compress         # compile the compressor and put it into build folder
