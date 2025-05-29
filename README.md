@@ -12,7 +12,7 @@ The real goal is for me to learn data structures better while also practicing po
 ---
 
 ## Project Structure
-
+```
 huffman-compression-project/
 ├── src/ # Source code files
 │ ├── compression.c # Compression algorithm implementation
@@ -28,6 +28,7 @@ huffman-compression-project/
 │ ├── input.txt
 │ ├── compressed.bin
 │ └── decompressed.txt
+```
 
 ---
 
@@ -41,14 +42,23 @@ cd huffman-compression-project                                                  
 gcc src/main_compress.c src/huffman.c src/hashtable.c -o build/compress         # compile the compressor and put it into build folder
 gcc src/main_decompress.c src/huffman.c src/hashtable.c -o build/decompress     # compile the decompressor and put it into build folder
 ```
+
+---
+
 ## How to Run
 
 ### Compress a file
 ```powershell
 cd build            # enter the executable folder
 ./compress.exe      # run the compressor
+```
+
+### Decompress a file
+```powershell
 ./decompress.exe    # run the decompressor
 ```
+
+---
 
 ## Notes
 
